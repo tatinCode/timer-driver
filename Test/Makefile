@@ -32,10 +32,6 @@
 # Using the command: make clean
 # will delete the executable and any object files in your directory.
 #
-
-FIRSTNAME=Justine
-LASTNAME=Tenorio
-
 ROOTNAME=main
 RUNOPTIONS=
 CC=gcc

@@ -29,10 +29,10 @@ int main(int argc, char *argv[]) {
     char duration_input[256];
     char custom_msg[256];
 
-    // if(argc != 2){
-    //     printf("Error, please put in an argument (e.g., \"1m 30s\". 45s, 1h\n");
-    //     return 1;
-    // }
+//    if(argc != 2){
+//        printf("Error, please put in an argument (e.g., \"1m 30s\". 45s, 1h\n");
+//        return 1;
+//    }
 
     //to get the duration string.
     //if there wasn't any arguments passed, then it asks the user for an input,

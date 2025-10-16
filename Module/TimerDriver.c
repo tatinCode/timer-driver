@@ -11,11 +11,13 @@
 *    is opened again, to make sure it functions as intended.
 *
 **************************************************************/
+#include <linux/init.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/fs.h>
 #include <linux/cdev.h>
 #include <linux/vmalloc.h>  
+#include <linux/string.h>
 
 #include <linux/uaccess.h>
 #include <linux/wait.h>         //wait queues
@@ -23,7 +25,6 @@
 #include <linux/timer.h>        //for timer related functions
 #include <linux/jiffies.h>      //for jiffies to ms conversion
 #include <linux/workqueue.h>    //for workqueues
-#include <linux/sched.h>
 
 #define MY_MAJOR 415
 #define MY_MINOR 0
@@ -130,7 +131,7 @@ static long myIoCtl (struct file *fs, unsigned int command, unsigned long data){
 
     //early return if cmd set timer wasnt turned on
     if(command != CMD_SET_TIMER){
-        printk(KERN_ERR);
+        printk(KERN_ERR "[TIMER DRIVER] invalid ioctl cmd: %u\n", command);
         return -1;
     }
 
@@ -153,10 +154,10 @@ struct file_operations fops = {
     .release = myClose,
     .read = myRead,
     .write = myWrite,
-    .unlocked_ioctl = myIoCtl,
+    .unlocked_ioctl = myIoCtl
 };
 
-int module_init(void){
+static int __init timer_init(void){
     int result;
     dev_t devno;
 
@@ -183,6 +184,7 @@ int module_init(void){
 
     printk(KERN_INFO "[TIMER DRIVER] Module loaded: %d\n", result);
     printk(KERN_INFO "Welcome - Timer Driver is loaded\n");
+
     // if(result < 0){
     //     printk(KERN_ERR "Register chardev failed : %d\n", result);
     // }
@@ -193,7 +195,7 @@ int module_init(void){
 /**
  * unregistering and removing device from kernel
  */
-void cleanup_module(void){
+static void __exit timer_exit(void){
     dev_t devno;
     devno = MKDEV(MY_MAJOR, MY_MINOR);
 
@@ -204,3 +206,5 @@ void cleanup_module(void){
     printk(KERN_INFO "[TIMER DRIVER] Module unloaded.\n");
 }
 
+module_init(timer_init);
+module_exit(timer_exit);
